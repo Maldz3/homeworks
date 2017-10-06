@@ -50,3 +50,35 @@ class Queue
     @queue
   end
 end
+
+
+class Map
+
+  def initialize
+    @map = []
+  end
+
+  def assign(key, value)
+    get_index = nil
+    @map.each { |pair| get_index = @map.index(pair) if pair[0] == key }
+    get_index ? @map[get_index][1] = value : @map << [key, value]
+    [key, valuemy]
+  end
+
+  def lookup(key)
+    @map.each { |pair| return pair[1] if pair[0] == key }
+    puts "That key is not in the map"
+  end
+
+  def remove(key)
+    get_index = nil
+    @map.each { |pair| get_index = @map.index(pair) if pair[0] == key}
+    @map.delete_at(get_index) if get_index
+    @map
+  end
+
+  def show
+    @map
+  end
+
+end
