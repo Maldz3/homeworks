@@ -4,7 +4,7 @@ class Board
   def initialize(name1, name2)
     @name1 = name1
     @name2 = name2
-    @cups = Array.new(14)
+    @cups = Array.new(14) { Array.new }
     place_stones
   end
 
@@ -21,42 +21,49 @@ class Board
   end
 
   def valid_move?(start_pos)
-    if start_pos > 14 || start_pos < 1
+    if start_pos > 13 || start_pos < 0
       raise "Invalid starting cup"
     end
+    raise "Invalid starting cup" if @cups[start_pos].empty?
   end
 
   def make_move(start_pos, current_player_name)
     number_of_stones = @cups[start_pos].length
     @cups[start_pos] = []
+    p @cups[start_pos]
     n = start_pos + 1
     until number_of_stones == 0
-      if  (n == 6 && current_player_name == @name2) || (n == 13 && current_player_name == @name1)
-        n == 13 ? n = 1 : n += 1
+      n = n % @cups.size
+      if n == 6
+        if current_player_name == @name1
+          @cups[6] << :stone
+          number_of_stones -= 1
+        end
+      elsif n == 13
+        if current_player_name == @name2
+          @cups[13] << :stone
+          number_of_stones -= 1
+        end
       else
         @cups[n] << :stone
-        n == 13 ? n = 1 : n += 1
         number_of_stones -= 1
       end
+      n += 1
     end
 
     render
-    next_turn(n)
-    # return :prompt if current_player_name == @name1 && (n > 0 || n < 7)
-    # return :prompt if current_player_name == @name2 && (n >= 7 || n <= 13)
+    next_turn(n-1)
+
   end
 
   def next_turn(ending_cup_idx)
-    # helper method to determine what #make_move returns
-    p '***************'
-    p ending_cup_idx
-    p @cups[ending_cup_idx].length
-    p '***************'
-    if @cups[ending_cup_idx].length >= 1
-      #next_turn(n)
-      return ending_cup_idx - 1
+
+    if ending_cup_idx == 6 || ending_cup_idx == 13
+      :prompt
+    elsif @cups[ending_cup_idx].length == 1
+      :switch
     else
-      return :switch
+      ending_cup_idx
     end
   end
 
